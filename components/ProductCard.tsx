@@ -6,22 +6,37 @@ interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
   onProductClick: (product: Product) => void;
+  onQuickView: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProductClick }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProductClick, onQuickView }) => {
   return (
     <div className="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-50 dark:border-slate-700/50 flex flex-col h-full group hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-black/20 transition-all duration-300 transform hover:-translate-y-1">
       <div 
         className="relative mb-4 cursor-pointer overflow-hidden rounded-2xl aspect-square bg-slate-50 dark:bg-slate-900"
-        onClick={() => onProductClick(product)}
       >
         <img 
           src={product.image} 
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+          onClick={() => onProductClick(product)}
         />
+        
+        {/* Quick View Overlay */}
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none group-hover:pointer-events-auto">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView(product);
+            }}
+            className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-900 dark:text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-amber-400 hover:text-slate-900"
+          >
+            <i className="fa-solid fa-eye mr-2"></i> Quick View
+          </button>
+        </div>
+
         {product.badge && (
-          <span className="absolute top-3 left-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-900 dark:text-white text-[9px] px-3 py-1 font-extrabold rounded-full shadow-sm border border-white/20 uppercase tracking-tighter">
+          <span className="absolute top-3 left-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-slate-900 dark:text-white text-[9px] px-3 py-1 font-extrabold rounded-full shadow-sm border border-white/20 uppercase tracking-tighter z-10">
             {product.badge}
           </span>
         )}

@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import CartSidebar from './components/CartSidebar';
+import QuickViewModal from './components/QuickViewModal';
 import LoginForm from './components/LoginForm';
 import AdminDashboard from './components/AdminDashboard';
 import ProfileView from './components/ProfileView';
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +147,10 @@ const App: React.FC = () => {
     setSelectedProduct(product);
     setView('PRODUCT_DETAIL');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleQuickView = (product: Product) => {
+    setQuickViewProduct(product);
   };
 
   const handleShare = (platform: string) => {
@@ -323,6 +329,7 @@ const App: React.FC = () => {
                 product={product} 
                 onAddToCart={addToCart} 
                 onProductClick={handleProductClick}
+                onQuickView={handleQuickView}
               />
             ))}
           </div>
@@ -440,6 +447,13 @@ const App: React.FC = () => {
 
       <CartSidebar isOpen={isCartOpen} items={cart} onClose={() => setIsCartOpen(false)} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} onCheckout={handleCheckout} />
       
+      <QuickViewModal 
+        product={quickViewProduct} 
+        onClose={() => setQuickViewProduct(null)} 
+        onAddToCart={addToCart} 
+        onViewDetails={handleProductClick}
+      />
+
       <BottomNav activeView={view} onViewChange={(v) => { setView(v); setSelectedProduct(null); if (v === 'HOME') { setSelectedCategory('All'); setSearchQuery(''); }}} onCartClick={() => setIsCartOpen(true)} cartCount={cart.reduce((sum, i) => sum + i.quantity, 0)} />
     </div>
   );
